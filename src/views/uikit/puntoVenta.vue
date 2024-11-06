@@ -1,9 +1,11 @@
 <script>
+
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 
 export default {
     data() {
+
         const toast = useToast();
         const visibleUpdate = ref(false);
         const visibleDelete = ref(false);
@@ -32,7 +34,8 @@ export default {
                     this.tablaCompras[productoIndex].precioUnitario = precioUnitarioNum;
                     this.tablaCompras[productoIndex].precioParcial = this.cantidad * precioUnitarioNum;
 
-                    toast.add({ severity: 'success', summary: 'Actualización', detail: 'Producto actualizado correctamente', life: 3000 });
+                    // Add confirmation message for update
+                    toast.add({ severity: 'success', summary: 'Confirmación', detail: 'Producto actualizado con éxito', life: 3000 });
                 } else {
                     toast.add({ severity: 'warn', summary: 'Error', detail: 'Precio unitario no válido', life: 3000 });
                 }
@@ -48,7 +51,9 @@ export default {
             const index = this.tablaCompras.indexOf(row);
             if (index !== -1) {
                 this.tablaCompras.splice(index, 1);
-                toast.add({ severity: 'success', summary: 'Eliminación', detail: 'Producto eliminado correctamente', life: 3000 });
+
+                // Add confirmation message for delete
+                toast.add({ severity: 'success', summary: 'Confirmación', detail: 'Producto eliminado con éxito', life: 3000 });
             }
             this.visibleDelete = false;
         }
@@ -87,37 +92,44 @@ export default {
             editarProducto,
             deleteProducto,
             updateProducto,
-            eliminarProducto,
+            eliminarProducto,                   
             tablaCompras: [
-                {"cns": 1, "nomProducto": "Impresora LaserJet Color", "cantidad": 2, "precioUnitario": 5200.00, "precioParcial": 10400.00},
-                {"cns": 2, "nomProducto": "Monitor LED 31 plg.", "cantidad": 3, "precioUnitario": 1700.00, "precioParcial": 5100.00}
+                { "cns": 1, "nomProducto": "Impresora LaserJet Color", "cantidad": 2, "precioUnitario": 5200.00, "precioParcial": 10400.00 },
+                { "cns": 2, "nomProducto": "Monitor LED 31 plg.", "cantidad": 3, "precioUnitario": 1700.00, "precioParcial": 5100.00 }
             ],
             productoItem: {
                 cns: null,
                 nomProducto: null,
                 cantidad: null,
-                precioUnitario: null,
+                precioUnintario: null,
                 precioParcial: null
             }
         };
     },
     methods: {
         formatoMoneda(value) {
-            return value ? value.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '';
+            if (value) return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            return;
         }
     },
     computed: {
         subtotal() {
-            return this.tablaCompras.reduce((subtotal, producto) => subtotal + producto.precioParcial, 0);
+            return this.tablaCompras.reduce((subtotal, producto) => {
+                return subtotal + producto.precioParcial;
+            }, 0);
         },
         iva() {
-            return this.tablaCompras.reduce((iva, producto) => iva + (producto.precioParcial * 0.16), 0);
+            return this.tablaCompras.reduce((iva, producto) => {
+                return iva + (producto.precioParcial * 0.16);
+            }, 0);
         },
         totalTotal() {
-            return this.subtotal + this.iva;
+            return this.tablaCompras.reduce((total, producto) => {
+                return total + producto.precioParcial + (producto.precioParcial * 0.16);
+            }, 0);
         }
     }
-}
+};
 </script>
 
 
