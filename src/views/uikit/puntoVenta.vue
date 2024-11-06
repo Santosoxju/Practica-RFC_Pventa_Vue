@@ -1,10 +1,12 @@
 <script>
+
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 
 export default {
     data() {
-        const toast = useToast();
+
+		const toast = useToast();
         const visibleUpdate = ref(false);
         const visibleDelete = ref(false);
 
@@ -13,98 +15,127 @@ export default {
         const precioUnitario = ref('');
 
         async function editarProducto(row) {
+            
             nomp.value = row.nomProducto;
             precioUnitario.value = row.precioUnitario;
             cantidad.value = row.cantidad;
-
+            
             this.productoItem.cns = row.cns;
             this.visibleUpdate = true;
         }
 
         async function updateProducto() {
-            const productoIndex = this.tablaCompras.findIndex(item => item.cns === this.productoItem.cns);
+    const productoIndex = this.tablaCompras.findIndex(item => item.cns === this.productoItem.cns);
 
-            if (productoIndex !== -1) {
-                const precioUnitarioNum = parseFloat(this.precioUnitario);
+    if (productoIndex !== -1) {
+        // Asegúrate de que 'precioUnitario' es un número
+        const precioUnitarioNum = parseFloat(this.precioUnitario);
 
-                if (!isNaN(precioUnitarioNum)) {
-                    this.tablaCompras[productoIndex].nomProducto = this.nomp;
-                    this.tablaCompras[productoIndex].cantidad = this.cantidad;
-                    this.tablaCompras[productoIndex].precioUnitario = precioUnitarioNum;
-                    this.tablaCompras[productoIndex].precioParcial = this.cantidad * precioUnitarioNum;
-                    
-                    toast.add({ severity: 'success', summary: 'Actualización', detail: 'Producto actualizado correctamente', life: 3000 });
-                } else {
-                    toast.add({ severity: 'warn', summary: 'Error', detail: 'Precio unitario no válido', life: 3000 });
-                }
-            }
-            this.visibleUpdate = false;
+        // Si el valor de precioUnitario es válido, actualiza
+        if (!isNaN(precioUnitarioNum)) {
+            this.tablaCompras[productoIndex].nomProducto = this.nomp;
+            this.tablaCompras[productoIndex].cantidad = this.cantidad;
+            this.tablaCompras[productoIndex].precioUnitario = precioUnitarioNum; // Sin el signo de dólar
+            this.tablaCompras[productoIndex].precioParcial = this.cantidad * precioUnitarioNum; // Recalcular precio parcial
+        } else {
+            toast.add({ severity: 'warn', summary: 'Error', detail: 'Precio unitario no válido', life: 3000 });
         }
+    }
+    this.visibleUpdate = false;
+}
+
 
         async function eliminarProducto(row) {
-            this.visibleDelete = true;
-        }
+			this.visibleDelete = true;
+		}
 
-        async function deleteProducto(row) {
-            const index = this.tablaCompras.indexOf(row);
-            if (index !== -1) {
-                this.tablaCompras.splice(index, 1);
-                toast.add({ severity: 'success', summary: 'Eliminado', detail: 'Producto eliminado correctamente', life: 3000 });
-            }
-            this.visibleDelete = false;
-        }
+		async function deleteProducto(row) {
+			const index = this.tablaCompras.indexOf(row);
+			if (index !== -1) {
+				this.tablaCompras.splice(index, 1);
+			}
+			this.visibleDelete = false;
+		}
 
-        async function registrarCompra() {
-            if (
-                this.productoItem.nomProducto.trim() !== '' &&
-                this.productoItem.cantidad.trim() !== '' &&
-                this.productoItem.precioUnitario.trim() !== ''
-            ) {
-                this.tablaCompras.push({
-                    cns: this.tablaCompras.length + 1, 
-                    nomProducto: this.productoItem.nomProducto,
-                    cantidad: parseFloat(this.productoItem.cantidad), 
-                    precioUnitario: parseFloat(this.productoItem.precioUnitario),
-                    precioParcial: parseFloat(this.productoItem.cantidad) * parseFloat(this.productoItem.precioUnitario)
-                });
+		async function registrarCompra() {
+			if (
+				this.productoItem.nomProducto.trim() !== '' &&
+				this.productoItem.cantidad.trim() !== '' &&
+				this.productoItem.precioUnitario.trim() !== ''
+			) {
+					this.tablaCompras.push({
+					cns: this.tablaCompras.length + 1, 
+					nomProducto: this.productoItem.nomProducto,
+					cantidad: parseFloat(this.productoItem.cantidad), 
+					precioUnitario: parseFloat(this.productoItem.precioUnitario),
+					precioParcial: parseFloat(this.productoItem.cantidad) * parseFloat(this.productoItem.precioUnitario)
+				});
+				toast.add({ severity: 'success', summary: 'Confirmación', detail: 'Nueva compra registrada', life: 3000 });
 
-                toast.add({ severity: 'success', summary: 'Confirmación', detail: 'Nueva compra registrada', life: 3000 });
-
-                this.productoItem.nomProducto = '';
-                this.productoItem.cantidad = '';
-                this.productoItem.precioUnitario = '';
-            } else {
-                toast.add({ severity: 'warn', summary: 'Alerta', detail: 'Verifica que los campos estén completos.', life: 3000 });
-            }
-        }
+				this.productoItem.nomProducto = '';
+				this.productoItem.cantidad = '';
+				this.productoItem.precioUnitario = '';
+			} else {
+				toast.add({ severity: 'warn', summary: 'Alerta', detail: 'Verifica que los campos estén completos.', life: 3000 });
+			}
+		}
 
         return { 
-            registrarCompra,
-            toast,
+			registrarCompra,
+			toast,      
             nomp,
             cantidad,
             precioUnitario,
             visibleDelete,
             visibleUpdate,
             editarProducto,
-            deleteProducto,
+			deleteProducto,
             updateProducto,
-            eliminarProducto,
-            tablaCompras: [
-                { "cns": 1, "nomProducto": "Impresora LaserJet Color", "cantidad": 2, "precioUnitario": 5200.00, "precioParcial": 10400.00 },
-                { "cns": 2, "nomProducto": "Monitor LED 31 plg.", "cantidad": 3, "precioUnitario": 1700.00, "precioParcial": 5100.00 }
-            ],
-            productoItem: {
-                cns: null,
-                nomProducto: null,
-                cantidad: null,
-                precioUnitario: null,
-                precioParcial: null
-            }
-        }
-    }
+            eliminarProducto,         			
+			tablaCompras: [
+			{"cns": 1, "nomProducto": "Impresora LaserJet Color", "cantidad": 2, "precioUnitario": 5200.00, "precioParcial": 10400.00},
+			{"cns": 2, "nomProducto": "Monitor LED 31 plg.", "cantidad": 3, "precioUnitario": 1700.00, "precioParcial": 5100.00}
+			],
+			productoItem: {
+				cns: null,
+				nomProducto: null,
+				cantidad:null,
+				precioUnintario:null,
+				precioParcial:null
+			}
+		}
+		},
+		created() {
+			
+		},		
+		methods: {
+			formatoMoneda(value) {
+				if(value)
+					return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+				return;
+			}
+        },
+		computed: {
+			subtotal() {
+				return this.tablaCompras.reduce((subtotal, producto) => {
+					return subtotal + producto.precioParcial;
+				}, 0);
+			},
+			iva(){
+				return this.tablaCompras.reduce((iva, producto) => {
+					return iva + (producto.precioParcial * 0.16);
+				}, 0);
+			},
+			totalTotal(){
+				return this.tablaCompras.reduce((total, producto) => {
+					return total + producto.precioParcial + (producto.precioParcial * 0.16);
+				}, 0);
+			}
+		}
 }
 </script>
+
+
 <template>
 	<div class="p-grid">
 		<Toast/>
