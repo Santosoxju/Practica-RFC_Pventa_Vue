@@ -13,7 +13,7 @@ const model = ref([
         items: [
             { label: 'Demo Clientes', icon: 'pi pi-fw pi-user', to: '/formClientes' },
             { label: 'Punto de venta', icon: 'pi pi-fw pi-cart-plus', to: '/puntoVenta' },
-            { label: 'Consultar API', icon: 'pi pi-fw pi-code', to: '/apiConsumir' },
+            { label: 'Consultar API', icon: 'pi pi-fw pi-code', to: '/apiConsumir' }
         ]
     }
 ]);
