@@ -24,6 +24,11 @@ const router = createRouter({
                     path: '/puntoVenta',
                     name: 'puntoVenta',
                     component: () => import('@/views/uikit/puntoVenta.vue')
+                },
+                {
+                    path: '/apiConsumir',
+                    name: 'apiConsumir',
+                    component: () => import('@/views/uikit/apiConsumir.vue')
                 }
             ]
         }
